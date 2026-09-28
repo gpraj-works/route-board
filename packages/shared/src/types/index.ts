@@ -1,4 +1,4 @@
-import { AgentStatus, JobStatus, UserRole, UserStatus } from '../enums/index'
+import { AgentStatus, JobStatus, SubscriptionStatus, UserRole, UserStatus } from '../enums/index'
 import { Coordinates } from '../schemas/index'
 
 export interface HealthResponse {
@@ -29,10 +29,24 @@ export interface CompanyDto {
   email?: string | null
   phone?: string | null
   address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
+  country?: string | null
   latitude?: number | null
   longitude?: number | null
   createdAt: string
   updatedAt: string
+}
+
+export interface SubscriptionInfo {
+  status: SubscriptionStatus
+  plan: string
+  trialStartedAt?: string | null
+  trialEndsAt?: string | null
+  daysRemaining: number
+  isTrialExpired: boolean
+  requiresCheckout: boolean
 }
 
 export interface CustomerDto {
@@ -96,6 +110,7 @@ export interface AuthResponse {
   refreshToken: string
   user: AuthUser
   company?: CompanyDto
+  subscription?: SubscriptionInfo
 }
 
 export interface RegisterRequest {
@@ -104,6 +119,10 @@ export interface RegisterRequest {
   phone: string
   password: string
   address: string
+  city?: string
+  state?: string
+  zipCode?: string
+  country?: string
   latitude?: number | null
   longitude?: number | null
 }

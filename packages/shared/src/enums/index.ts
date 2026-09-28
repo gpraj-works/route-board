@@ -25,4 +25,15 @@ export enum JobStatus {
   CANCELLED = 'cancelled'
 }
 
+export const SubscriptionStatus = {
+  TRIAL: 'trial',
+  ACTIVE: 'active',
+  PAST_DUE: 'past_due',
+  CANCELLED: 'cancelled',
+  EXPIRED: 'expired'
+} as const
+
+export type SubscriptionStatusKey = keyof typeof SubscriptionStatus
+export type SubscriptionStatus = (typeof SubscriptionStatus)[keyof typeof SubscriptionStatus]
+
 export const THEME_COLORS = ['teal', 'indigo', 'blue', 'violet', 'orange', 'green'] as const

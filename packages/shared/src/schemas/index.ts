@@ -31,6 +31,10 @@ export const registerSchema = z.object({
   phone: phoneSchema,
   password: z.string().min(8, 'Password must be at least 8 characters'),
   address: z.string().min(5, 'Company address is required'),
+  city: z.string().max(100).optional(),
+  state: z.string().max(100).optional(),
+  zipCode: z.string().max(20).optional(),
+  country: z.string().max(50).optional(),
   latitude: z.number().min(-90).max(90).optional().nullable(),
   longitude: z.number().min(-180).max(180).optional().nullable()
 })
