@@ -104,7 +104,13 @@ export async function fetchAnalyticsSummary(companyId: string): Promise<Analytic
       avgMinutes: sql<number>`COALESCE(AVG(EXTRACT(EPOCH FROM (${jobs.updatedAt} - ${jobs.createdAt})) / 60), 0)`
     })
     .from(jobs)
-    .where(and(eq(jobs.companyId, companyId), eq(jobs.status, JobStatus.COMPLETE)))
+    .where(
+      and(
+        eq(jobs.companyId, companyId),
+        eq(jobs.status, JobStatus.COMPLETE),
+        sql`${jobs.updatedAt} >= ${jobs.createdAt}`
+      )
+    )
 
   const avgCompletionTimeMinutes = Math.round(Number(completedDurationResult[0]?.avgMinutes || 0))
 
@@ -224,7 +230,8 @@ export async function fetchPersonalAnalytics(
       and(
         eq(jobs.companyId, companyId),
         eq(jobs.assignedAgentId, linkedAgent.id),
-        eq(jobs.status, JobStatus.COMPLETE)
+        eq(jobs.status, JobStatus.COMPLETE),
+        sql`${jobs.updatedAt} >= ${jobs.createdAt}`
       )
     )
 
