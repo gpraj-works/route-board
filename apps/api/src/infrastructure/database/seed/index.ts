@@ -15,7 +15,19 @@ export async function seedDatabase() {
   const defaultPasswordHash = await argon2.hash('password123')
 
   // Company A — Acme HVAC Services (Atlanta, GA)
-  const [companyA] = await db.insert(companies).values({ name: 'Acme HVAC Services' }).returning()
+  const [companyA] = await db
+    .insert(companies)
+    .values({
+      name: 'Acme HVAC Services',
+      address: '245 Peachtree St NW, Atlanta, GA 30303',
+      city: 'Atlanta',
+      state: 'GA',
+      zipCode: '30303',
+      country: 'US',
+      trialStartedAt: dayjs().toDate(),
+      trialEndsAt: dayjs().add(14, 'day').toDate()
+    })
+    .returning()
 
   const [ownerA] = await db
     .insert(users)
@@ -135,7 +147,19 @@ export async function seedDatabase() {
   ])
 
   // Company B — Apex Plumbing Co. (New York, NY)
-  const [companyB] = await db.insert(companies).values({ name: 'Apex Plumbing Co.' }).returning()
+  const [companyB] = await db
+    .insert(companies)
+    .values({
+      name: 'Apex Plumbing Co.',
+      address: '100 Broadway, New York, NY 10005',
+      city: 'New York',
+      state: 'NY',
+      zipCode: '10005',
+      country: 'US',
+      trialStartedAt: dayjs().toDate(),
+      trialEndsAt: dayjs().add(14, 'day').toDate()
+    })
+    .returning()
 
   const [ownerB] = await db
     .insert(users)

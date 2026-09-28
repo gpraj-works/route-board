@@ -8,6 +8,8 @@ import {
   CompanyDto,
   JwtPayload,
   RegisterRequest,
+  SubscriptionInfo,
+  SubscriptionStatus,
   UserRole
 } from '@whosonsite/shared'
 import { env } from '../../config/env'
@@ -19,6 +21,10 @@ import {
   sendPasswordResetEmail
 } from '../../infrastructure/email'
 import * as authRepo from './auth.repository'
+import {
+  computeSubscriptionInfo,
+  TRIAL_DAYS
+} from '../subscription/subscription.service'
 
 function hashToken(token: string): string {
   return crypto.createHash('sha256').update(token).digest('hex')
@@ -61,6 +67,10 @@ function formatCompany(company: {
   email?: string | null
   phone?: string | null
   address?: string | null
+  city?: string | null
+  state?: string | null
+  zipCode?: string | null
+  country?: string | null
   latitude?: number | null
   longitude?: number | null
   primaryColor?: string | null
@@ -73,6 +83,10 @@ function formatCompany(company: {
     email: company.email || null,
     phone: company.phone || null,
     address: company.address || null,
+    city: company.city || null,
+    state: company.state || null,
+    zipCode: company.zipCode || null,
+    country: company.country || null,
     latitude: company.latitude ?? null,
     longitude: company.longitude ?? null,
     primaryColor: company.primaryColor || 'teal',
@@ -96,8 +110,15 @@ export async function register(data: RegisterRequest): Promise<AuthResponse> {
         email: data.email.toLowerCase(),
         phone: data.phone,
         address: data.address,
+        city: data.city ?? null,
+        state: data.state ?? null,
+        zipCode: data.zipCode ?? null,
+        country: data.country ?? 'US',
         latitude: data.latitude ?? null,
-        longitude: data.longitude ?? null
+        longitude: data.longitude ?? null,
+        trialStartedAt: new Date(),
+        trialEndsAt: dayjs().add(TRIAL_DAYS, 'day').toDate(),
+        subscriptionStatus: SubscriptionStatus.TRIAL
       },
       tx
     )
@@ -138,7 +159,8 @@ export async function register(data: RegisterRequest): Promise<AuthResponse> {
         ...user,
         role: user.role as UserRole
       }),
-      company: formatCompany(company)
+      company: formatCompany(company),
+      subscription: computeSubscriptionInfo(company)
     }
   })
 
@@ -191,7 +213,8 @@ export async function login(email: string, password: string): Promise<AuthRespon
       ...user,
       role: user.role as UserRole
     }),
-    company: company ? formatCompany(company) : undefined
+    company: company ? formatCompany(company) : undefined,
+    subscription: company ? computeSubscriptionInfo(company) : undefined
   }
 }
 
@@ -254,7 +277,8 @@ export async function refreshToken(rawRefreshToken: string): Promise<AuthRespons
       ...user,
       role: user.role as UserRole
     }),
-    company: company ? formatCompany(company) : undefined
+    company: company ? formatCompany(company) : undefined,
+    subscription: company ? computeSubscriptionInfo(company) : undefined
   }
 }
 
@@ -268,7 +292,7 @@ export async function logout(rawRefreshToken: string): Promise<void> {
 
 export async function getCurrentUser(
   userId: string
-): Promise<{ user: AuthUser; company?: CompanyDto }> {
+): Promise<{ user: AuthUser; company?: CompanyDto; subscription?: SubscriptionInfo }> {
   const user = await authRepo.findUserById(userId)
   if (!user) {
     throw new Error('User not found.')
@@ -277,7 +301,8 @@ export async function getCurrentUser(
 
   return {
     user: formatAuthUser({ ...user, role: user.role as UserRole }),
-    company: company ? formatCompany(company) : undefined
+    company: company ? formatCompany(company) : undefined,
+    subscription: company ? computeSubscriptionInfo(company) : undefined
   }
 }
 

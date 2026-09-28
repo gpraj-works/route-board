@@ -37,7 +37,8 @@ export const register: RequestHandler = asyncHandler(async (req: Request, res: R
     {
       accessToken: result.accessToken,
       user: result.user,
-      company: result.company
+      company: result.company,
+      subscription: result.subscription
     },
     'Company and owner registered successfully.',
     HttpStatus.CREATED
@@ -54,7 +55,8 @@ export const login: RequestHandler = asyncHandler(async (req: Request, res: Resp
     sendSuccess(res, {
       accessToken: result.accessToken,
       user: result.user,
-      company: result.company
+      company: result.company,
+      subscription: result.subscription
     })
   } catch (err) {
     throw new UnauthorizedError(err instanceof Error ? err.message : undefined)
@@ -77,7 +79,8 @@ export const refresh: RequestHandler = asyncHandler(async (req: Request, res: Re
     sendSuccess(res, {
       accessToken: result.accessToken,
       user: result.user,
-      company: result.company
+      company: result.company,
+      subscription: result.subscription
     })
   } catch (err) {
     res.clearCookie(REFRESH_COOKIE_NAME, getClearCookieOptions())
