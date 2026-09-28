@@ -1,7 +1,7 @@
 import { Router } from 'express'
-import { UserRole } from '@whosonsite/shared'
+import { Permission } from '@whosonsite/shared'
 import { authenticate } from '../../middleware/authenticate'
-import { authorize } from '../../middleware/authorize'
+import { requirePermission } from '../../middleware/authorize'
 import { companyContext } from '../../middleware/company'
 import {
   assignJobController,
@@ -21,31 +21,39 @@ const router: Router = Router()
 router.use(authenticate, companyContext)
 
 // Job CRUD & Listing
-router.post('/', authorize(UserRole.OWNER, UserRole.ADMIN), createJobController)
+router.post('/', requirePermission(Permission.JOBS_CREATE), createJobController)
 
-router.get('/', authorize(UserRole.OWNER, UserRole.ADMIN, UserRole.AGENT), listJobsController)
+router.get(
+  '/',
+  requirePermission(Permission.JOBS_VIEW_ALL, Permission.JOBS_VIEW_OWN),
+  listJobsController
+)
 
-router.get('/:id', authorize(UserRole.OWNER, UserRole.ADMIN, UserRole.AGENT), getJobByIdController)
+router.get(
+  '/:id',
+  requirePermission(Permission.JOBS_VIEW_ALL, Permission.JOBS_VIEW_OWN),
+  getJobByIdController
+)
 
-router.patch('/:id', authorize(UserRole.OWNER, UserRole.ADMIN), updateJobController)
+router.patch('/:id', requirePermission(Permission.JOBS_UPDATE), updateJobController)
 
-router.delete('/:id', authorize(UserRole.OWNER, UserRole.ADMIN), deleteJobController)
+router.delete('/:id', requirePermission(Permission.JOBS_DELETE), deleteJobController)
 
 // Agent Assignments
-router.post('/:id/assign', authorize(UserRole.OWNER, UserRole.ADMIN), assignJobController)
+router.post('/:id/assign', requirePermission(Permission.JOBS_ASSIGN), assignJobController)
 
-router.post('/:id/unassign', authorize(UserRole.OWNER, UserRole.ADMIN), unassignJobController)
+router.post('/:id/unassign', requirePermission(Permission.JOBS_ASSIGN), unassignJobController)
 
 // Status Transitions & Audit History
 router.post(
   '/:id/status',
-  authorize(UserRole.OWNER, UserRole.ADMIN, UserRole.AGENT),
+  requirePermission(Permission.JOBS_STATUS_UPDATE),
   updateJobStatusController
 )
 
 router.get(
   '/:id/status-history',
-  authorize(UserRole.OWNER, UserRole.ADMIN, UserRole.AGENT),
+  requirePermission(Permission.JOBS_HISTORY_VIEW),
   getJobHistoryController
 )
 

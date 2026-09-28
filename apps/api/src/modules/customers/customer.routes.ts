@@ -1,7 +1,7 @@
 import { Router } from 'express'
-import { UserRole } from '@whosonsite/shared'
+import { Permission } from '@whosonsite/shared'
 import { authenticate } from '../../middleware/authenticate'
-import { authorize } from '../../middleware/authorize'
+import { requirePermission } from '../../middleware/authorize'
 import { companyContext } from '../../middleware/company'
 import {
   createCustomer,
@@ -16,14 +16,14 @@ const router = Router()
 // All customer endpoints require authentication & company context scope
 router.use(authenticate, companyContext)
 
-router.get('/', authorize(UserRole.OWNER, UserRole.ADMIN), listCustomers)
+router.get('/', requirePermission(Permission.CUSTOMERS_VIEW), listCustomers)
 
-router.get('/:id', authorize(UserRole.OWNER, UserRole.ADMIN), getCustomerById)
+router.get('/:id', requirePermission(Permission.CUSTOMERS_VIEW), getCustomerById)
 
-router.post('/', authorize(UserRole.OWNER, UserRole.ADMIN), createCustomer)
+router.post('/', requirePermission(Permission.CUSTOMERS_CREATE), createCustomer)
 
-router.patch('/:id', authorize(UserRole.OWNER, UserRole.ADMIN), updateCustomer)
+router.patch('/:id', requirePermission(Permission.CUSTOMERS_UPDATE), updateCustomer)
 
-router.delete('/:id', authorize(UserRole.OWNER, UserRole.ADMIN), deleteCustomer)
+router.delete('/:id', requirePermission(Permission.CUSTOMERS_DELETE), deleteCustomer)
 
 export const customerRouter: Router = router

@@ -79,7 +79,11 @@ notificationWorker.on('failed', (job, err) => {
   logger.error({ jobId: job?.id, name: job?.name, err }, 'Notification job failed')
 })
 
-/** Gracefully close the worker connection */
+/** Gracefully close the worker connection without hanging when Redis is offline */
 export async function closeNotificationWorker(): Promise<void> {
-  await notificationWorker.close()
+  const graceful = notificationWorker.close().catch(() => undefined)
+  const timeout = new Promise<void>((resolve) => {
+    setTimeout(resolve, 3000)
+  })
+  await Promise.race([graceful, timeout])
 }
