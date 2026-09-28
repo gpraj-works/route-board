@@ -116,3 +116,5 @@ pnpm dev:web   # Starts Web server on http://localhost:3000
 - [x] **Phase 6 — Operations Analytics & Summary Aggregations**
 - [x] **Phase 7 — Testing**
 - [x] **Phase 8 — 4-Tier RBAC, Modular Dashboards, Route Plans & People Management**
+- [x] **Phase 10 — Public Homepage & Registration Funnel**
+- [x] **Phase 11 — Billing & Subscription (sandbox checkout; Razorpay deferred)**

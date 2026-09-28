@@ -58,6 +58,7 @@ WhosOnSite is a `pnpm` monorepo organized into three primary packages:
   - `authenticate`: Validates JWT and attaches `req.auth`.
   - `requirePermission` / `authorize`: Enforces Role-Based Access Control and fine-grained permissions (`owner`, `admin`, `staff`, `agent`).
   - `companyContext`: Enforces active company scope.
+  - `requireActiveSubscription`: Composed `[authenticate, companyContext, enforceSubscription]` whole-app gate — 403 `TRIAL_EXPIRED` / `SUBSCRIPTION_REQUIRED` with `{ requiresCheckout: true }` when a company's trial is over or its subscription is not `active`. Mounted in `routes/index.ts` after `/auth`, `/subscription`, `/public`.
   - `authLimiter`: Protects `/api/auth/*` endpoints against rate limit abuse.
 
 ---

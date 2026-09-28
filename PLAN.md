@@ -1336,9 +1336,8 @@ if (subscription?.requiresCheckout) {
 
 **Stripe Integration:**
 
-- Defer full Stripe integration to Phase 10
-- Create placeholder checkout page with "Coming Soon" messaging
-- Reserve `stripeCustomerId` and `stripeSubscriptionId` columns for future use
+- Deferred in favor of **Razorpay** (Phase 11+; see `docs/tmp-billing.md`). Phase 11 shipped a sandbox checkout — `POST /subscription/checkout` (creates a session) + `POST /subscription/checkout/confirm` (moves `trial` → `active`), no real charge.
+- Reserve `payment_customer_id` and `payment_subscription_id` columns for the real gateway.
 
 **Migration:**
 
@@ -1396,7 +1395,7 @@ if (subscription?.requiresCheckout) {
 
 #### 9.8 Future Enhancements (Phase 11+)
 
-- Stripe integration for payment processing
+- Razorpay integration for payment processing
 - Plan-based module access (different features per plan)
 - Billing portal for subscription management
 - Invoice generation and email delivery
@@ -1445,28 +1444,29 @@ if (subscription?.requiresCheckout) {
 
 ### Phase 11 — Billing & Subscription (Later)
 
+> **Status: Implemented via sandbox checkout** (see `docs/plans/phase-11-billing-subscription.md`). Real payment capture is deferred to **Razorpay** (see `docs/tmp-billing.md`).
+
 **Depends on:** Phase 10 funnel · §9.1–9.8 design sketches
 
 **Objective:** Turn the static plans section into real subscription management: payment checkout, webhooks, plan-based access control, trial-expiry gating, and a billing portal.
 
 **Detailed tasks (concrete list, absorbed from §9.1–9.8):**
 
-- Extend `companies` with subscription columns: `phone`, `address`, `city`, `state`, `zip_code`, `country`, `trial_started_at`, `trial_ends_at`, `subscription_status` enum (`trial` / `active` / `past_due` / `cancelled` / `expired`); reserve `stripe_customer_id` and `stripe_subscription_id` for later.
-- Replace the minimal 3-field registration with the full company-details form (phone, address, city, state, zip, country) capturing billing-ready data.
-- Build the `subscription` backend module: `GET /subscription/status`, `POST /subscription/checkout`, `POST /subscription/webhook`, `PUT /subscription/cancel`.
-- Stripe checkout integration + payment webhook handling; success/cancel URL handling on the frontend.
-- `requireActiveSubscription` guard middleware + frontend `SubscriptionGuard`; trial-expired users redirected to `/checkout` on login.
-- Trial badge in `AppLayout` showing days remaining; disappears when trial expires or subscription becomes active.
-- Plan-based module access, upgrade/downgrade, billing portal, invoice generation/email.
-- Wire the static homepage pricing tiers to real Stripe plan IDs.
+- ✅ Extend `companies` with subscription columns: `phone`, `address`, `city`, `state`, `zip_code`, `country`, `trial_started_at`, `trial_ends_at`, `subscription_status` enum (`trial` / `active` / `past_due` / `cancelled` / `expired`); reserve `payment_customer_id` and `payment_subscription_id` for Razorpay (migration `0005`).
+- ✅ Full company-details registration form (phone, address, city, state, zip, country) capturing billing-ready data (city/state/zip/country optional).
+- ✅ Build the `subscription` backend module: `GET /subscription/status`, `POST /subscription/checkout` (sandbox), `POST /subscription/checkout/confirm` (sandbox `trial` → `active`), `POST /subscription/webhook` (stub), `PUT /subscription/cancel`.
+- ⏳ Razorpay checkout integration + payment webhook handling; success/cancel URL handling on the frontend.
+- ✅ `requireActiveSubscription` guard middleware + frontend `ProtectedRoute` checkout redirect; trial-expired users steered to `/checkout`.
+- ✅ Trial badge in `AppHeader` showing days remaining; disappears when trial expires or subscription becomes active.
+- ⏳ Plan-based module access, upgrade/downgrade, billing portal, invoice generation/email.
+- ⏳ Wire the static homepage pricing tiers to real Razorpay plan IDs.
 
 **Exit criteria:**
 
-- Registration captures full company/billing details on signup.
-- A paid checkout session completes end-to-end and the company flips from `trial` to `active` via webhook.
-- Trial-expired companies are gated with a clear checkout redirect.
-- `pnpm typecheck` and `pnpm test` pass with 0 errors.
+- ✅ Fresh 14-day trial for every company (register, existing rows, seed).
+- ✅ Sandbox checkout flips the company from `trial` to `active`; trial-expired companies are gated with a clear checkout redirect.
+- ✅ `pnpm typecheck` and `pnpm test` pass with 0 errors across all 3 packages.
 
 ---
 
-_Document version 1.4 — extended roadmap with Phase 10 (Public Homepage & Registration) and Phase 11 (Billing & Subscription, later); retitled §9.8 future enhancements to Phase 11+._
+_Document version 1.5 — Phase 11 (Billing & Subscription) implemented via sandbox checkout (14-day trial, whole-app gate, `/subscription` module, registration captures city/state/zip/country); real payments deferred to Razorpay. v1.4 added the extended roadmap with Phase 10 (Public Homepage & Registration) + Phase 11 and retitled §9.8 future enhancements to Phase 11+._
