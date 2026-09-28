@@ -1,8 +1,8 @@
 import { Router } from 'express'
-import { UserRole } from '@whosonsite/shared'
+import { Permission } from '@whosonsite/shared'
 import { authenticate } from '../../middleware/authenticate'
 import { companyContext } from '../../middleware/company'
-import { authorize } from '../../middleware/authorize'
+import { requirePermission } from '../../middleware/authorize'
 import * as agentController from './agent.controller'
 
 const router = Router()
@@ -10,20 +10,20 @@ const router = Router()
 // Apply authentication and company context middleware across all agent routes
 router.use(authenticate, companyContext)
 
-router.get('/', authorize([UserRole.OWNER, UserRole.ADMIN]), agentController.listAgents)
+router.get('/', requirePermission(Permission.AGENTS_VIEW), agentController.listAgents)
 
-router.get('/nearby', authorize([UserRole.OWNER, UserRole.ADMIN]), agentController.nearbyAgents)
+router.get('/nearby', requirePermission(Permission.AGENTS_VIEW), agentController.nearbyAgents)
 
-router.post('/', authorize([UserRole.OWNER, UserRole.ADMIN]), agentController.createAgent)
+router.post('/', requirePermission(Permission.AGENTS_CREATE), agentController.createAgent)
 
 router.patch(
   '/:id/location',
-  authorize([UserRole.AGENT, UserRole.OWNER, UserRole.ADMIN]),
+  requirePermission(Permission.AGENTS_UPDATE, Permission.JOBS_STATUS_UPDATE),
   agentController.updateLocation
 )
 
-router.patch('/:id', authorize([UserRole.OWNER, UserRole.ADMIN]), agentController.updateAgent)
+router.patch('/:id', requirePermission(Permission.AGENTS_UPDATE), agentController.updateAgent)
 
-router.delete('/:id', authorize([UserRole.OWNER, UserRole.ADMIN]), agentController.deleteAgent)
+router.delete('/:id', requirePermission(Permission.AGENTS_DELETE), agentController.deleteAgent)
 
 export const agentRouter: Router = router

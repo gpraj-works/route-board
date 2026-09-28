@@ -1,29 +1,18 @@
 import React from 'react'
-import { Navigate } from 'react-router-dom'
-import { UserRole } from '@whosonsite/shared'
-
-import { LoadingState } from '../common/LoadingState'
-import { useAuth } from './AuthContext'
+import { Permission } from '@whosonsite/shared'
+import { RequirePermission } from './RequirePermission'
 
 interface AgentOnlyProps {
   children: React.ReactNode
 }
 
+/**
+ * Route protection wrapper allowing only agents with own-job viewing permissions.
+ */
 export const AgentOnly: React.FC<AgentOnlyProps> = ({ children }) => {
-  const { isAuthenticated, isLoading, user } = useAuth()
-
-  if (isLoading) {
-    return <LoadingState message="Verifying permissions..." />
-  }
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />
-  }
-
-  const allowedRoles = [UserRole.AGENT, UserRole.OWNER, UserRole.ADMIN]
-  if (!user || !allowedRoles.includes(user.role)) {
-    return <Navigate to="/dashboard" replace />
-  }
-
-  return <>{children}</>
+  return (
+    <RequirePermission permission={[Permission.JOBS_VIEW_OWN, Permission.JOBS_VIEW_ALL]}>
+      {children}
+    </RequirePermission>
+  )
 }

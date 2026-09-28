@@ -1,29 +1,14 @@
 import React from 'react'
-import { Navigate } from 'react-router-dom'
-import { UserRole } from '@whosonsite/shared'
-
-import { LoadingState } from '../common/LoadingState'
-import { useAuth } from './AuthContext'
+import { Permission } from '@whosonsite/shared'
+import { RequirePermission } from './RequirePermission'
 
 interface ManagementOnlyProps {
   children: React.ReactNode
 }
 
+/**
+ * Route protection wrapper allowing only management users with analytics view permissions.
+ */
 export const ManagementOnly: React.FC<ManagementOnlyProps> = ({ children }) => {
-  const { isAuthenticated, isLoading, user } = useAuth()
-
-  if (isLoading) {
-    return <LoadingState message="Verifying permissions..." />
-  }
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />
-  }
-
-  const allowedRoles = [UserRole.OWNER, UserRole.ADMIN]
-  if (!user || !allowedRoles.includes(user.role)) {
-    return <Navigate to="/dashboard" replace />
-  }
-
-  return <>{children}</>
+  return <RequirePermission permission={Permission.ANALYTICS_VIEW}>{children}</RequirePermission>
 }

@@ -22,6 +22,7 @@ export async function seedDatabase() {
     .values({
       companyId: companyA.id,
       email: 'owner@acmehvac.com',
+      name: 'Alice Owner',
       passwordHash: defaultPasswordHash,
       role: UserRole.OWNER
     })
@@ -32,17 +33,28 @@ export async function seedDatabase() {
     .values({
       companyId: companyA.id,
       email: 'admin@acmehvac.com',
+      name: 'Aaron Admin',
       passwordHash: defaultPasswordHash,
       role: UserRole.ADMIN,
       createdBy: ownerA.id
     })
     .returning()
 
+  await db.insert(users).values({
+    companyId: companyA.id,
+    email: 'staff@acmehvac.com',
+    name: 'Sam Staff',
+    passwordHash: defaultPasswordHash,
+    role: UserRole.STAFF,
+    createdBy: adminA.id
+  })
+
   const [techUserA1] = await db
     .insert(users)
     .values({
       companyId: companyA.id,
       email: 'tech1@acmehvac.com',
+      name: 'John Atlanta Tech',
       passwordHash: defaultPasswordHash,
       role: UserRole.AGENT,
       createdBy: adminA.id
@@ -130,6 +142,7 @@ export async function seedDatabase() {
     .values({
       companyId: companyB.id,
       email: 'owner@apexplumbing.com',
+      name: 'Betty Owner',
       passwordHash: defaultPasswordHash,
       role: UserRole.OWNER
     })
@@ -140,17 +153,28 @@ export async function seedDatabase() {
     .values({
       companyId: companyB.id,
       email: 'admin@apexplumbing.com',
+      name: 'Bob Admin',
       passwordHash: defaultPasswordHash,
       role: UserRole.ADMIN,
       createdBy: ownerB.id
     })
     .returning()
 
+  await db.insert(users).values({
+    companyId: companyB.id,
+    email: 'staff@apexplumbing.com',
+    name: 'Sally Staff',
+    passwordHash: defaultPasswordHash,
+    role: UserRole.STAFF,
+    createdBy: adminB.id
+  })
+
   const [techUserB1] = await db
     .insert(users)
     .values({
       companyId: companyB.id,
       email: 'tech1@apexplumbing.com',
+      name: 'Mike Brooklyn Tech',
       passwordHash: defaultPasswordHash,
       role: UserRole.AGENT,
       createdBy: adminB.id

@@ -5,6 +5,7 @@ import { customerRouter } from '../modules/customers/customer.routes'
 import jobRouter from '../modules/jobs/job.routes'
 import { publicStatusRouter } from '../modules/public-status/public-status.routes'
 import { agentRouter } from '../modules/agents/agent.routes'
+import { usersRouter } from '../modules/users/users.routes'
 
 const apiRouter: Router = Router()
 
@@ -13,6 +14,7 @@ apiRouter.use('/agents', agentRouter)
 apiRouter.use('/customers', customerRouter)
 apiRouter.use('/jobs', jobRouter)
 apiRouter.use('/analytics', analyticsRouter)
+apiRouter.use('/users', usersRouter)
 apiRouter.use('/public', publicStatusRouter)
 
 export { apiRouter }

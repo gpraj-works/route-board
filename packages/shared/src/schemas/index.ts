@@ -132,3 +132,5 @@ export type CreateAgentInput = z.infer<typeof createAgentSchema>
 export const updateAgentSchema = createAgentSchema.partial()
 
 export type UpdateAgentInput = z.infer<typeof updateAgentSchema>
+
+export * from './user.schema'

@@ -12,12 +12,13 @@ import {
   Title,
   Tooltip
 } from '@mantine/core'
-import { AgentDto, AgentStatus } from '@whosonsite/shared'
+import { AgentDto, AgentStatus, Permission } from '@whosonsite/shared'
 import { Edit2, MapPin, Phone } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { useAppTheme } from '../../app/theme/ThemeContext'
 import { formatDateTime, formatRelative } from '@whosonsite/shared'
+import { useCan } from '../auth/RequirePermission'
 import { ApiErrorAlert, ConfirmDialog } from '../feedback'
 import { useAgents, useDeleteAgent } from './queries'
 import { AgentFormModal } from './Form'
@@ -26,6 +27,8 @@ import { Trash2 } from 'lucide-react'
 export const AgentList: React.FC = () => {
   const { t } = useTranslation()
   const { primaryColor } = useAppTheme()
+  const canUpdate = useCan(Permission.AGENTS_UPDATE)
+  const canDelete = useCan(Permission.AGENTS_DELETE)
   const { data: agents = [], isLoading, error } = useAgents()
   const deleteAgentMutation = useDeleteAgent()
 
@@ -177,26 +180,30 @@ export const AgentList: React.FC = () => {
                     </Table.Td>
                     <Table.Td ta="right">
                       <Group gap="xs" justify="flex-end" wrap="nowrap">
-                        <Tooltip label={t('common.edit', 'Edit')}>
-                          <ActionIcon
-                            variant="light"
-                            color="blue"
-                            size="sm"
-                            onClick={() => setEditingAgent(tech)}
-                          >
-                            <Edit2 size={14} />
-                          </ActionIcon>
-                        </Tooltip>
-                        <Tooltip label={t('common.delete', 'Delete')}>
-                          <ActionIcon
-                            variant="light"
-                            color="red"
-                            size="sm"
-                            onClick={() => setAgentToDelete(tech)}
-                          >
-                            <Trash2 size={14} />
-                          </ActionIcon>
-                        </Tooltip>
+                        {canUpdate && (
+                          <Tooltip label={t('common.edit', 'Edit')}>
+                            <ActionIcon
+                              variant="light"
+                              color="blue"
+                              size="sm"
+                              onClick={() => setEditingAgent(tech)}
+                            >
+                              <Edit2 size={14} />
+                            </ActionIcon>
+                          </Tooltip>
+                        )}
+                        {canDelete && (
+                          <Tooltip label={t('common.delete', 'Delete')}>
+                            <ActionIcon
+                              variant="light"
+                              color="red"
+                              size="sm"
+                              onClick={() => setAgentToDelete(tech)}
+                            >
+                              <Trash2 size={14} />
+                            </ActionIcon>
+                          </Tooltip>
+                        )}
                       </Group>
                     </Table.Td>
                   </Table.Tr>
