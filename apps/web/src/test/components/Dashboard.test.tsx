@@ -35,16 +35,46 @@ vi.mock('../../components/agents/queries', () => ({
   })
 }))
 
+vi.mock('../../components/customers/queries', () => ({
+  useCustomers: () => ({
+    data: [],
+    isLoading: false,
+    error: null
+  })
+}))
+
+vi.mock('../../components/people/queries', () => ({
+  useUsers: () => ({
+    data: [],
+    isLoading: false,
+    error: null
+  })
+}))
+
+vi.mock('../../components/analytics/queries', () => ({
+  usePersonalAnalytics: () => ({
+    data: { completedJobs: 0, activeJobs: 0, totalAssignedJobs: 0, completionRate: 0 },
+    isLoading: false,
+    error: null
+  })
+}))
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Dashboard } from '../../pages/Dashboard'
 
 const renderDashboard = (role: UserRole) => {
   mockAuth.user = { role }
+  const testQueryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } }
+  })
   return render(
-    <MemoryRouter>
-      <MantineProvider>
-        <Dashboard />
-      </MantineProvider>
-    </MemoryRouter>
+    <QueryClientProvider client={testQueryClient}>
+      <MemoryRouter>
+        <MantineProvider>
+          <Dashboard />
+        </MantineProvider>
+      </MemoryRouter>
+    </QueryClientProvider>
   )
 }
 

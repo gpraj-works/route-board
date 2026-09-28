@@ -19,23 +19,27 @@ export function useSocketEvents(enabled = true) {
     const cleanup = registerSocketHandlers(socket, {
       onJobCreated: () => {
         queryClient.invalidateQueries({ queryKey: jobKeys.lists() })
+        queryClient.invalidateQueries({ queryKey: ['analytics'] })
       },
       onJobAssigned: (event) => {
         queryClient.invalidateQueries({ queryKey: jobKeys.lists() })
         queryClient.invalidateQueries({ queryKey: jobKeys.detail(event.jobId) })
         queryClient.invalidateQueries({ queryKey: jobKeys.history(event.jobId) })
         queryClient.invalidateQueries({ queryKey: agentKeys.all })
+        queryClient.invalidateQueries({ queryKey: ['analytics'] })
       },
       onJobStatusChanged: (event) => {
         queryClient.invalidateQueries({ queryKey: jobKeys.lists() })
         queryClient.invalidateQueries({ queryKey: jobKeys.detail(event.jobId) })
         queryClient.invalidateQueries({ queryKey: jobKeys.history(event.jobId) })
+        queryClient.invalidateQueries({ queryKey: ['analytics'] })
       },
       onAgentLocationUpdated: () => {
         queryClient.invalidateQueries({ queryKey: agentKeys.all })
       },
       onAgentStatusChanged: () => {
         queryClient.invalidateQueries({ queryKey: agentKeys.all })
+        queryClient.invalidateQueries({ queryKey: ['analytics'] })
       }
     })
 

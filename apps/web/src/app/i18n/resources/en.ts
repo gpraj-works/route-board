@@ -23,10 +23,20 @@ export const en = {
       dashboard: 'Dashboard',
       dispatch: 'Jobs',
       jobs: 'Jobs',
+      routePlans: 'Route Plans',
+      myJobs: 'My Jobs',
       agents: 'Agents',
       customers: 'Customers',
+      people: 'People',
       analytics: 'Analytics',
-      settings: 'Settings'
+      settings: 'Settings',
+      subscription: 'Subscription'
+    },
+    role: {
+      owner: 'Owner',
+      admin: 'Admin',
+      staff: 'Staff',
+      agent: 'Agent'
     },
     theme: {
       title: 'Appearance',
@@ -114,7 +124,17 @@ export const en = {
       jobsCompleted: 'jobs completed',
       todaySchedule: "Today's Schedule",
       todayScheduleSubtitle: 'Assigned jobs scheduled for today',
-      noTodayJobs: 'No jobs scheduled for today.'
+      noTodayJobs: 'No jobs scheduled for today.',
+      staffDashboardTitle: 'Staff Operations Board',
+      staffSubtitle: 'Operational view for jobs, customers, and field availability',
+      customersSnapshot: 'Customers Overview',
+      registeredClients: 'clients in directory',
+      viewAllCustomers: 'View All',
+      noCustomersMessage: 'No customers added yet.',
+      teamSnapshot: 'Team Members',
+      totalActiveStaff: 'configured accounts',
+      manageTeam: 'Manage',
+      billingOverview: 'Subscription'
     },
     jobs: {
       title: 'Jobs',
@@ -288,7 +308,8 @@ export const en = {
       },
       plans: {
         title: 'Simple plans that scale with your crew',
-        subtitle: 'Straightforward per-agent pricing for the whole operation. Billing is coming soon.',
+        subtitle:
+          'Straightforward per-agent pricing for the whole operation. Billing is coming soon.',
         perAgent: 'per agent / month',
         startTrial: 'Start free trial',
         popular: 'Most popular',
@@ -345,6 +366,90 @@ export const en = {
           register: 'Start free trial'
         }
       }
+    },
+    routePlans: {
+      title: 'My Daily Route Plan',
+      subtitle: 'Chronological stops, navigation coordinates, and execution progress for today',
+      stopsTitle: 'Scheduled Stops',
+      noStopsToday: 'No scheduled stops for today',
+      noStopsDesc: 'Assigned jobs scheduled for today will automatically appear here.'
+    },
+    statusActions: {
+      startTravel: 'Start Travel',
+      arriveOnSite: 'Arrive On Site',
+      markComplete: 'Complete Job'
+    },
+    people: {
+      title: 'People & Team',
+      subtitle: 'Manage company members, assign role permissions, and track active team seats',
+      addMember: 'Add Member',
+      addMemberTitle: 'Add Team Member',
+      member: 'Member',
+      role: 'Role',
+      status: 'Status',
+      fieldLink: 'Field Tech',
+      joinedDate: 'Joined',
+      noMembersFound: 'No members matching filter criteria.',
+      youBadge: 'You',
+      linkedTech: 'Linked Agent',
+      changeRole: 'Change Role',
+      changeRoleTitle: 'Change Member Role',
+      changingRoleFor: 'Updating access permissions for',
+      newRoleLabel: 'Select New Role',
+      ownershipTransferTitle: 'Transfer Ownership Warning',
+      ownershipTransferWarning:
+        'Transferring company ownership will promote this user to Owner and demote your account to Admin. This action cannot be undone by an Admin.',
+      confirmTransfer: 'Transfer Ownership',
+      searchPlaceholder: 'Search name or email...',
+      emailLabel: 'Email Address',
+      nameLabel: 'Full Name',
+      roleLabel: 'Role',
+      passwordLabel: 'Temporary Password (optional)',
+      createMemberSubmit: 'Create Member',
+      deactivate: 'Deactivate Member',
+      activate: 'Activate Member',
+      cannotDeactivateSelf: 'Cannot deactivate yourself',
+      cannotDeactivateOwner: 'Owner cannot be deactivated',
+      deactivateTitle: 'Deactivate Member',
+      activateTitle: 'Activate Member',
+      deactivateMessage:
+        'Are you sure you want to deactivate this member? They will no longer be able to log in or access company dispatch data.',
+      activateMessage: 'Are you sure you want to re-activate this member account?',
+      deactivateConfirm: 'Deactivate',
+      activateConfirm: 'Activate'
+    },
+    billing: {
+      title: 'Subscription & Billing',
+      subtitle: 'Company plan tier, dispatch seat allocations, and invoicing details',
+      tabTitle: 'Subscription',
+      roadmapNoticeTitle: 'Billing Management Preview',
+      roadmapNotice:
+        'Stripe payment gateway integration is scheduled for Phase 11. Your company is currently running on the complimentary Professional Plan.',
+      activePlan: 'ACTIVE PLAN',
+      activeBadge: 'ACTIVE',
+      paymentMethod: 'Payment Method',
+      managePlan: 'Manage Plan'
+    },
+    company: {
+      tabTitle: 'Company Profile',
+      title: 'Company Profile',
+      detailsTitle: 'Company Details',
+      detailsDesc: 'Manage company business information and dispatch settings'
+    },
+    analytics: {
+      topAgentsTitle: 'Top Performing Technicians',
+      topAgentsSubtitle: 'Technician dispatch resolution rates and completion velocity',
+      completedJobs: 'Completed Jobs',
+      totalJobsAssigned: 'Total Assigned',
+      completionPercentage: 'Resolution Rate',
+      noTopAgents: 'No agent performance data recorded yet.',
+      jobsByStatus: 'Jobs by Status',
+      agentAvailability: 'Agent Availability',
+      jobsTrend: 'Jobs Trend'
+    },
+    personal: {
+      performanceTitle: 'My Performance',
+      performanceSubtitle: 'Your personal dispatch and completion statistics'
     }
   }
 }

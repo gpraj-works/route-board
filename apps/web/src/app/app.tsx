@@ -2,12 +2,12 @@ import React from 'react'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { Provider } from 'react-redux'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { Permission } from '@whosonsite/shared'
 
 import { AuthProvider } from '../components/auth/AuthContext'
-import { ManagementOnly } from '../components/auth/ManagementOnly'
 import { ProtectedRoute } from '../components/auth/ProtectedRoute'
 import { PublicRoute } from '../components/auth/PublicRoute'
-import { AgentOnly } from '../components/auth/AgentOnly'
+import { RequirePermission } from '../components/auth/RequirePermission'
 import { Analytics } from '../pages/Analytics'
 import { CustomerStatusPage } from '../pages/CustomerStatusPage'
 import { Customers } from '../pages/Customers'
@@ -21,6 +21,9 @@ import { ResetPassword } from '../pages/ResetPassword'
 import { Settings } from '../pages/Settings'
 import { AgentJobs } from '../pages/AgentJobs'
 import { Agents } from '../pages/Agents'
+import { RoutePlans } from '../pages/RoutePlans'
+import { People } from '../pages/People'
+import { Subscription } from '../pages/Subscription'
 import { store } from '../store'
 import { queryClient } from './query/client'
 import { ThemeProvider } from './theme/ThemeContext'
@@ -50,32 +53,79 @@ export const App: React.FC = () => {
                 {/* Protected Authenticated Routes */}
                 <Route element={<ProtectedRoute />}>
                   <Route path="/dashboard" element={<Dashboard />} />
+
                   <Route
                     path="/my-jobs"
                     element={
-                      <AgentOnly>
+                      <RequirePermission permission={Permission.JOBS_VIEW_OWN}>
                         <AgentJobs />
-                      </AgentOnly>
+                      </RequirePermission>
                     }
                   />
+
+                  <Route
+                    path="/route-plans"
+                    element={
+                      <RequirePermission permission={Permission.ROUTE_PLANS_VIEW_OWN}>
+                        <RoutePlans />
+                      </RequirePermission>
+                    }
+                  />
+
                   <Route
                     path="/jobs"
                     element={
-                      <ManagementOnly>
+                      <RequirePermission permission={Permission.JOBS_VIEW_ALL}>
                         <Jobs />
-                      </ManagementOnly>
+                      </RequirePermission>
                     }
                   />
+
                   <Route
                     path="/analytics"
                     element={
-                      <ManagementOnly>
+                      <RequirePermission permission={Permission.ANALYTICS_VIEW}>
                         <Analytics />
-                      </ManagementOnly>
+                      </RequirePermission>
                     }
                   />
-                  <Route path="/agents" element={<Agents />} />
-                  <Route path="/customers" element={<Customers />} />
+
+                  <Route
+                    path="/agents"
+                    element={
+                      <RequirePermission permission={Permission.AGENTS_VIEW}>
+                        <Agents />
+                      </RequirePermission>
+                    }
+                  />
+
+                  <Route
+                    path="/customers"
+                    element={
+                      <RequirePermission permission={Permission.CUSTOMERS_VIEW}>
+                        <Customers />
+                      </RequirePermission>
+                    }
+                  />
+
+                  <Route
+                    path="/people"
+                    element={
+                      <RequirePermission permission={Permission.USERS_VIEW}>
+                        <People />
+                      </RequirePermission>
+                    }
+                  />
+
+                  <Route
+                    path="/subscription"
+                    element={
+                      <RequirePermission permission={Permission.BILLING_VIEW}>
+                        <Subscription />
+                      </RequirePermission>
+                    }
+                  />
+
                   <Route path="/settings" element={<Settings />} />
                 </Route>
 

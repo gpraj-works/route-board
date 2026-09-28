@@ -15,11 +15,12 @@ import {
   TextInput,
   Tooltip
 } from '@mantine/core'
-import { JobDto, JobStatus } from '@whosonsite/shared'
+import { JobDto, JobStatus, Permission } from '@whosonsite/shared'
 import { MapPin, Navigation, Plus, Search, UserCheck } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { JOB_STATUS_COLORS, useAppTheme } from '../app/theme'
+import { Can } from '../components/auth/RequirePermission'
 import { PageHeader } from '../components/common/PageHeader'
 import { StatusBadge } from '../components/common/StatusBadge'
 import { JobMap } from '../components/jobs/JobMap'
@@ -98,13 +99,15 @@ export const Jobs: React.FC = () => {
           title={t('jobs.title', 'Jobs')}
           subtitle={t('jobs.subtitle', 'Manage job assignments, status, and tracking')}
           actions={
-            <Button
-              leftSection={<Plus size={16} />}
-              color={primaryColor}
-              onClick={() => setCreateModalOpened(true)}
-            >
-              {t('common.new', 'New')}
-            </Button>
+            <Can do={Permission.JOBS_CREATE}>
+              <Button
+                leftSection={<Plus size={16} />}
+                color={primaryColor}
+                onClick={() => setCreateModalOpened(true)}
+              >
+                {t('common.new', 'New')}
+              </Button>
+            </Can>
           }
         />
 
@@ -267,20 +270,22 @@ export const Jobs: React.FC = () => {
                           </Group>
 
                           {job.status === JobStatus.UNASSIGNED && (
-                            <Button
-                              size="xs"
-                              variant="light"
-                              color="teal"
-                              fullWidth
-                              mt={4}
-                              leftSection={<UserCheck size={12} />}
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                setAssignModalJob(job)
-                              }}
-                            >
-                              {t('jobs.assign', 'Assign Agent')}
-                            </Button>
+                            <Can do={Permission.JOBS_ASSIGN}>
+                              <Button
+                                size="xs"
+                                variant="light"
+                                color="teal"
+                                fullWidth
+                                mt={4}
+                                leftSection={<UserCheck size={12} />}
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  setAssignModalJob(job)
+                                }}
+                              >
+                                {t('jobs.assign', 'Assign Agent')}
+                              </Button>
+                            </Can>
                           )}
                         </Stack>
                       </Card>
