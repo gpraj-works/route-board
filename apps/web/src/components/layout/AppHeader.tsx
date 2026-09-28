@@ -8,6 +8,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAppTheme } from '../../app/theme/ThemeContext'
 import { useAuth } from '../auth/AuthContext'
 import { Logo } from '../common/Logo'
+import { SubscriptionStatus } from '@whosonsite/shared'
 
 interface AppHeaderProps {
   mobileOpened: boolean
@@ -17,11 +18,44 @@ interface AppHeaderProps {
 export const AppHeader: React.FC<AppHeaderProps> = ({ mobileOpened, toggleMobile }) => {
   const { t } = useTranslation()
   const { colorScheme, toggleColorScheme, primaryColor } = useAppTheme()
-  const { user, logout } = useAuth()
+  const { user, company, subscription, logout } = useAuth()
   const queryClient = useQueryClient()
   const navigate = useNavigate()
 
-  const companyName = useAuth().company?.name || 'WhosOnSite'
+  const companyName = company?.name || 'WhosOnSite'
+
+  const requiresCheckout = Boolean(subscription?.requiresCheckout)
+  const isActive = subscription?.status === SubscriptionStatus.ACTIVE
+
+  const subscriptionBadge = requiresCheckout ? (
+    <Tooltip label={t('billing.trialEnded', 'Your 14-day trial has ended')}>
+      <Badge
+        color="red"
+        variant="light"
+        size="md"
+        style={{ cursor: 'pointer' }}
+        onClick={() => navigate('/checkout')}
+      >
+        {t('billing.expiredBadge', 'EXPIRED')}
+      </Badge>
+    </Tooltip>
+  ) : isActive ? (
+    <Badge color="green" variant="light" size="md" tt="uppercase">
+      {t('billing.activeBadge', 'ACTIVE')}
+    </Badge>
+  ) : (
+    <Tooltip
+      label={t('billing.trialRemaining', '{days} days remaining in your trial', {
+        days: subscription?.daysRemaining ?? 0
+      })}
+    >
+      <Badge color="blue" variant="light" size="md" tt="uppercase">
+        {t('billing.trialRemaining', '{days} days remaining in your trial', {
+          days: subscription?.daysRemaining ?? 0
+        })}
+      </Badge>
+    </Tooltip>
+  )
 
   const handleGlobalRefresh = async () => {
     await queryClient.invalidateQueries()
@@ -59,6 +93,8 @@ export const AppHeader: React.FC<AppHeaderProps> = ({ mobileOpened, toggleMobile
 
       {/* Header Controls */}
       <Group gap="xs" wrap="nowrap">
+        {subscription && subscriptionBadge}
+
         {/* Global Page Refresh Button */}
         <Tooltip label={t('common.refresh', 'Refresh Current Page')}>
           <ActionIcon

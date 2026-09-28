@@ -11,7 +11,7 @@ interface ProtectedRouteProps {
 }
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ allowedRoles }) => {
-  const { isAuthenticated, isLoading, user } = useAuth()
+  const { isAuthenticated, isLoading, user, requiresCheckout } = useAuth()
   const location = useLocation()
 
   if (isLoading) {
@@ -20,6 +20,14 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ allowedRoles }) 
 
   if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />
+  }
+
+  if (
+    requiresCheckout &&
+    location.pathname !== '/checkout' &&
+    location.pathname !== '/subscription'
+  ) {
+    return <Navigate to="/checkout" replace />
   }
 
   if (allowedRoles && user && !allowedRoles.includes(user.role)) {

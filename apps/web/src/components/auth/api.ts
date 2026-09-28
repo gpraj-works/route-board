@@ -5,11 +5,19 @@ import {
   ForgotPasswordRequest,
   LoginRequest,
   RegisterRequest,
-  ResetPasswordRequest
+  ResetPasswordRequest,
+  SubscriptionInfo
 } from '@whosonsite/shared'
 import { apiClient } from '../../lib/api'
 
-export type MeResponse = { user: AuthUser; company?: CompanyDto }
+export type MeResponse = { user: AuthUser; company?: CompanyDto; subscription?: SubscriptionInfo }
+
+export type CheckoutSession = {
+  provider: string
+  sandbox: boolean
+  plan: { id: string; name: string; amountPerMonth: number; currency: string }
+  message?: string
+}
 
 export async function loginApi(data: LoginRequest) {
   return apiClient<AuthResponse>('/auth/login', {
@@ -50,6 +58,28 @@ export async function meApi() {
 export async function logoutApi() {
   return apiClient<void>('/auth/logout', {
     method: 'POST'
+  })
+}
+
+export async function getSubscriptionStatusApi() {
+  return apiClient<SubscriptionInfo>('/subscription/status')
+}
+
+export async function createCheckoutApi() {
+  return apiClient<CheckoutSession>('/subscription/checkout', {
+    method: 'POST'
+  })
+}
+
+export async function confirmCheckoutApi() {
+  return apiClient<SubscriptionInfo>('/subscription/checkout/confirm', {
+    method: 'POST'
+  })
+}
+
+export async function cancelSubscriptionApi() {
+  return apiClient<SubscriptionInfo>('/subscription/cancel', {
+    method: 'PUT'
   })
 }
 

@@ -24,6 +24,7 @@ import { Agents } from '../pages/Agents'
 import { RoutePlans } from '../pages/RoutePlans'
 import { People } from '../pages/People'
 import { Subscription } from '../pages/Subscription'
+import { Checkout } from '../pages/Checkout'
 import { store } from '../store'
 import { queryClient } from './query/client'
 import { ThemeProvider } from './theme/ThemeContext'
@@ -125,6 +126,8 @@ export const App: React.FC = () => {
                       </RequirePermission>
                     }
                   />
+
+                  <Route path="/checkout" element={<Checkout />} />
 
                   <Route path="/settings" element={<Settings />} />
                 </Route>

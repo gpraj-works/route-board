@@ -6,6 +6,7 @@ import {
   Card,
   Center,
   Container,
+  Grid,
   Group,
   PasswordInput,
   Stack,
@@ -41,12 +42,18 @@ export const RegisterForm: React.FC = () => {
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [address, setAddress] = useState('')
+  const [city, setCity] = useState('')
+  const [state, setState] = useState('')
+  const [zipCode, setZipCode] = useState('')
+  const [country, setCountry] = useState('')
   const [latitude, setLatitude] = useState<number | null>(null)
   const [longitude, setLongitude] = useState<number | null>(null)
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [fieldErrors, setFieldErrors] = useState<RegisterFieldErrors>({})
+
+  const optionalOrUndefined = (value: string) => (value.trim() ? value.trim() : undefined)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -59,6 +66,10 @@ export const RegisterForm: React.FC = () => {
       phone,
       password,
       address,
+      city: optionalOrUndefined(city),
+      state: optionalOrUndefined(state),
+      zipCode: optionalOrUndefined(zipCode),
+      country: optionalOrUndefined(country),
       latitude,
       longitude
     })
@@ -83,6 +94,10 @@ export const RegisterForm: React.FC = () => {
         phone,
         password,
         address,
+        city: optionalOrUndefined(city),
+        state: optionalOrUndefined(state),
+        zipCode: optionalOrUndefined(zipCode),
+        country: optionalOrUndefined(country),
         latitude,
         longitude
       })
@@ -185,6 +200,41 @@ export const RegisterForm: React.FC = () => {
                 withAsterisk
                 zIndex={400}
               />
+
+              <Grid gutter="md">
+                <Grid.Col span={6}>
+                  <TextInput
+                    label="City"
+                    placeholder="e.g. Atlanta"
+                    value={city}
+                    onChange={(e) => setCity(e.currentTarget.value)}
+                  />
+                </Grid.Col>
+                <Grid.Col span={6}>
+                  <TextInput
+                    label="State / Region"
+                    placeholder="e.g. GA"
+                    value={state}
+                    onChange={(e) => setState(e.currentTarget.value)}
+                  />
+                </Grid.Col>
+                <Grid.Col span={6}>
+                  <TextInput
+                    label="ZIP Code"
+                    placeholder="e.g. 30303"
+                    value={zipCode}
+                    onChange={(e) => setZipCode(e.currentTarget.value)}
+                  />
+                </Grid.Col>
+                <Grid.Col span={6}>
+                  <TextInput
+                    label="Country"
+                    placeholder="e.g. US"
+                    value={country}
+                    onChange={(e) => setCountry(e.currentTarget.value)}
+                  />
+                </Grid.Col>
+              </Grid>
 
               <PasswordInput
                 label={t('auth.register.password')}

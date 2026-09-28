@@ -8,6 +8,7 @@ const { mockAuth } = vi.hoisted(() => ({
   mockAuth: {
     isAuthenticated: false,
     isLoading: false,
+    requiresCheckout: false,
     user: null as null | { role: string }
   }
 }))
@@ -33,6 +34,7 @@ const resetAuth = (overrides: Partial<typeof mockAuth> = {}) => {
   Object.assign(mockAuth, {
     isAuthenticated: false,
     isLoading: false,
+    requiresCheckout: false,
     user: null,
     ...overrides
   })
@@ -107,6 +109,41 @@ describe('ProtectedRoute', () => {
     )
 
     expect(screen.getByText('dashboard-page')).toBeInTheDocument()
+  })
+
+  it('redirects to /checkout when the subscription requires checkout', () => {
+    resetAuth({ isAuthenticated: true, user: { role: UserRole.OWNER }, requiresCheckout: true })
+
+    render(
+      <MemoryRouter initialEntries={['/jobs']}>
+        <Routes>
+          <Route element={<ProtectedRoute />}>
+            <Route path="/jobs" element={<div>jobs-child</div>} />
+          </Route>
+          <Route path="/checkout" element={<div>checkout-page</div>} />
+        </Routes>
+      </MemoryRouter>
+    )
+
+    expect(screen.getByText('checkout-page')).toBeInTheDocument()
+    expect(screen.queryByText('jobs-child')).not.toBeInTheDocument()
+  })
+
+  it('allows the /checkout route while the subscription requires checkout', () => {
+    resetAuth({ isAuthenticated: true, user: { role: UserRole.OWNER }, requiresCheckout: true })
+
+    render(
+      <MemoryRouter initialEntries={['/checkout']}>
+        <Routes>
+          <Route element={<ProtectedRoute />}>
+            <Route path="/checkout" element={<div>checkout-content</div>} />
+            <Route path="/jobs" element={<div>jobs-child</div>} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    )
+
+    expect(screen.getByText('checkout-content')).toBeInTheDocument()
   })
 })
 

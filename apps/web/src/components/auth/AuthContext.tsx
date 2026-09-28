@@ -4,6 +4,7 @@ import {
   CompanyDto,
   LoginRequest,
   RegisterRequest,
+  SubscriptionInfo,
   ThemeColorType
 } from '@whosonsite/shared'
 import { useAppTheme } from '../../app/theme/ThemeContext'
@@ -15,26 +16,34 @@ import {
   clearCredentials,
   loginThunk,
   logoutThunk,
-  registerThunk
+  registerThunk,
+  setSubscription
 } from '../../store/slices/authSlice'
 
 interface AuthContextType {
   user: AuthUser | null
   company: CompanyDto | null
+  subscription: SubscriptionInfo | null
+  requiresCheckout: boolean
   isAuthenticated: boolean
   isLoading: boolean
   login: (data: LoginRequest) => Promise<void>
   register: (data: RegisterRequest) => Promise<void>
   logout: () => Promise<void>
+  refreshSubscription: () => void
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const dispatch = useAppDispatch()
-  const { user, company, isAuthenticated, isLoading } = useAppSelector((state) => state.auth)
+  const { user, company, subscription, isAuthenticated, isLoading } = useAppSelector(
+    (state) => state.auth
+  )
   const { setPrimaryColor } = useAppTheme()
   const hasBootstrappedRef = useRef<boolean>(false)
+
+  const requiresCheckout = Boolean(subscription?.requiresCheckout)
 
   // Update tenant primary color on company load if no user custom selection exists
   useEffect(() => {
@@ -101,16 +110,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     await dispatch(logoutThunk())
   }, [dispatch])
 
+  const refreshSubscription = useCallback(() => {
+    import('../../components/auth/api').then((authApi) =>
+      authApi
+        .getSubscriptionStatusApi()
+        .then((info) => dispatch(setSubscription(info)))
+        .catch(() => {
+          // Ignore transient failures; the status refreshes on next bootstrap
+        })
+    )
+  }, [dispatch])
+
   return (
     <AuthContext.Provider
       value={{
         user,
         company,
+        subscription,
+        requiresCheckout,
         isAuthenticated,
         isLoading,
         login,
         register,
-        logout
+        logout,
+        refreshSubscription
       }}
     >
       {children}

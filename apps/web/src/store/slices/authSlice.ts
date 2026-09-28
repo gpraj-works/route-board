@@ -4,7 +4,8 @@ import {
   AuthUser,
   CompanyDto,
   LoginRequest,
-  RegisterRequest
+  RegisterRequest,
+  SubscriptionInfo
 } from '@whosonsite/shared'
 import { getAccessToken, setAccessToken } from '../../lib/api'
 import { queryClient } from '../../app/query/client'
@@ -14,6 +15,7 @@ import type { MeResponse } from '../../components/auth/api'
 export interface AuthState {
   user: AuthUser | null
   company: CompanyDto | null
+  subscription: SubscriptionInfo | null
   isAuthenticated: boolean
   isLoading: boolean
 }
@@ -21,6 +23,7 @@ export interface AuthState {
 const initialState: AuthState = {
   user: null,
   company: null,
+  subscription: null,
   isAuthenticated: false,
   isLoading: true
 }
@@ -97,15 +100,23 @@ export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    setCredentials: (state, action: PayloadAction<{ user: AuthUser; company?: CompanyDto }>) => {
+    setCredentials: (
+      state,
+      action: PayloadAction<{ user: AuthUser; company?: CompanyDto; subscription?: SubscriptionInfo }>
+    ) => {
       state.user = action.payload.user
       state.company = action.payload.company || null
+      state.subscription = action.payload.subscription || null
       state.isAuthenticated = true
       state.isLoading = false
+    },
+    setSubscription: (state, action: PayloadAction<SubscriptionInfo>) => {
+      state.subscription = action.payload
     },
     clearCredentials: (state) => {
       state.user = null
       state.company = null
+      state.subscription = null
       state.isAuthenticated = false
       state.isLoading = false
     }
@@ -116,6 +127,7 @@ export const authSlice = createSlice({
       if (action.payload) {
         state.user = action.payload.user
         state.company = action.payload.company || null
+        state.subscription = action.payload.subscription || null
         state.isAuthenticated = true
       }
       state.isLoading = false
@@ -123,6 +135,7 @@ export const authSlice = createSlice({
     builder.addCase(bootstrapSessionThunk.rejected, (state) => {
       state.user = null
       state.company = null
+      state.subscription = null
       state.isAuthenticated = false
       state.isLoading = false
     })
@@ -131,6 +144,7 @@ export const authSlice = createSlice({
     builder.addCase(loginThunk.fulfilled, (state, action) => {
       state.user = action.payload.user
       state.company = action.payload.company || null
+      state.subscription = action.payload.subscription || null
       state.isAuthenticated = true
       state.isLoading = false
     })
@@ -139,6 +153,7 @@ export const authSlice = createSlice({
     builder.addCase(registerThunk.fulfilled, (state, action) => {
       state.user = action.payload.user
       state.company = action.payload.company || null
+      state.subscription = action.payload.subscription || null
       state.isAuthenticated = true
       state.isLoading = false
     })
@@ -147,11 +162,12 @@ export const authSlice = createSlice({
     builder.addCase(logoutThunk.fulfilled, (state) => {
       state.user = null
       state.company = null
+      state.subscription = null
       state.isAuthenticated = false
       state.isLoading = false
     })
   }
 })
 
-export const { setCredentials, clearCredentials } = authSlice.actions
+export const { setCredentials, clearCredentials, setSubscription } = authSlice.actions
 export default authSlice.reducer
