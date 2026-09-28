@@ -1,7 +1,13 @@
 export enum UserRole {
   OWNER = 'owner',
   ADMIN = 'admin',
+  STAFF = 'staff',
   AGENT = 'agent'
+}
+
+export enum UserStatus {
+  ACTIVE = 'active',
+  DEACTIVATED = 'deactivated'
 }
 
 export enum AgentStatus {

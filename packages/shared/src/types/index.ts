@@ -1,4 +1,4 @@
-import { AgentStatus, JobStatus, UserRole } from '../enums/index'
+import { AgentStatus, JobStatus, UserRole, UserStatus } from '../enums/index'
 import { Coordinates } from '../schemas/index'
 
 export interface HealthResponse {
@@ -53,8 +53,42 @@ export interface AuthUser {
   id: string
   companyId: string
   email: string
+  name?: string | null
   role: UserRole
+  status?: UserStatus
   createdAt: string
+}
+
+export interface UserDto {
+  id: string
+  companyId: string
+  email: string
+  name: string | null
+  role: UserRole
+  status: UserStatus
+  agentLinked: boolean
+  agentId?: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export interface CreateUserRequest {
+  email: string
+  name?: string
+  password?: string
+  role: UserRole
+}
+
+export interface UpdateUserRequest {
+  name?: string
+  role?: UserRole
+  status?: UserStatus
+}
+
+export interface UserQueryRequest {
+  role?: UserRole
+  status?: UserStatus
+  search?: string
 }
 
 export interface AuthResponse {
@@ -152,6 +186,14 @@ export interface DailyJobCount {
   count: number
 }
 
+export interface TopAgentMetric {
+  agentId: string
+  name: string
+  completedJobs: number
+  totalJobs: number
+  completionPct: number
+}
+
 export interface AnalyticsSummaryDto {
   jobsByStatus: Record<JobStatus, number>
   jobsCreatedLast14Days: DailyJobCount[]
@@ -159,4 +201,14 @@ export interface AnalyticsSummaryDto {
   avgCompletionTimeMinutes: number
   totalJobsCount: number
   totalAgentsCount: number
+  totalUsersCount: number
+  topAgents: TopAgentMetric[]
+}
+
+export interface PersonalAnalyticsDto {
+  jobsByStatus: Record<JobStatus, number>
+  completionRate: number
+  avgCompletionTimeMinutes: number
+  todayJobsCount: number
+  completedTodayCount: number
 }
