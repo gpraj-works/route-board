@@ -56,7 +56,7 @@ WhosOnSite is a `pnpm` monorepo organized into three primary packages:
 - **Token Rotation**: Single-use refresh token rotation with immediate reuse detection and chain revocation.
 - **Middleware**:
   - `authenticate`: Validates JWT and attaches `req.auth`.
-  - `authorize`: Enforces Role-Based Access Control (`owner`, `admin`, `agent`).
+  - `requirePermission` / `authorize`: Enforces Role-Based Access Control and fine-grained permissions (`owner`, `admin`, `staff`, `agent`).
   - `companyContext`: Enforces active company scope.
   - `authLimiter`: Protects `/api/auth/*` endpoints against rate limit abuse.
 

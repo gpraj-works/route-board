@@ -58,6 +58,7 @@ Migrations and the demo dataset are applied automatically on first start
 | ----- | -------------------- | ------------- |
 | Owner | `owner@acmehvac.com` | `password123` |
 | Admin | `admin@acmehvac.com` | `password123` |
+| Staff | `staff@acmehvac.com` | `password123` |
 | Agent | `tech1@acmehvac.com` | `password123` |
 
 Stop all containers:
@@ -114,3 +115,4 @@ pnpm dev:web   # Starts Web server on http://localhost:3000
 - [x] **Phase 5 — Technician Mobile View & Live GPS Location Pings**
 - [x] **Phase 6 — Operations Analytics & Summary Aggregations**
 - [x] **Phase 7 — Testing**
+- [x] **Phase 8 — 4-Tier RBAC, Modular Dashboards, Route Plans & People Management**
